@@ -1,6 +1,7 @@
 package com.foodorder.foodservice.service;
 
 import com.foodorder.foodservice.dto.FoodDto;
+import com.foodorder.foodservice.exception.custom.FoodNotFoundException;
 import com.foodorder.foodservice.model.Food;
 import com.foodorder.foodservice.repository.FoodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,11 @@ public class FoodService {
     }
 
     public FoodDto getFoodByName(String name) {
-        return convert(foodRepository.findByNameIgnoreCase(name).get());
+        return convert(foodRepository.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new FoodNotFoundException(name)));
     }
 
     public Set<FoodDto> findFoodByName(String name) {
-
         return foodRepository.findFoodsByNameContainsIgnoreCase(name)
                 .stream()
                 .map(this::convert).collect(Collectors.toSet());
