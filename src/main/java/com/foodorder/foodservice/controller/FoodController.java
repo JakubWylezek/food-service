@@ -1,6 +1,6 @@
 package com.foodorder.foodservice.controller;
 
-import com.foodorder.foodservice.model.Food;
+import com.foodorder.foodservice.dto.FoodDto;
 import com.foodorder.foodservice.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,17 +20,17 @@ public class FoodController {
     private FoodService foodService;
 
     @GetMapping(value = "/foods")
-    public ResponseEntity<List<Food>> getAllFood() {
+    public ResponseEntity<List<FoodDto>> getAllFood() {
         return new ResponseEntity<>(foodService.getAllFood(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/foods/{name}")
-    public ResponseEntity<Food> getFoodByName(@PathVariable String name) {
+    public ResponseEntity<FoodDto> getFoodByName(@PathVariable String name) {
         return new ResponseEntity<>(foodService.getFoodByName(name), HttpStatus.OK);
     }
 
     @GetMapping(value = "/foods/find")
-    public ResponseEntity<Set<Food>> findFoodByName(@RequestParam(value = "name") String name) {
+    public ResponseEntity<Set<FoodDto>> findFoodByName(@RequestParam(value = "name") String name) {
         return new ResponseEntity<>(foodService.findFoodByName(name), HttpStatus.OK);
     }
 
