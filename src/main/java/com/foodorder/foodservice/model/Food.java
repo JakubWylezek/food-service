@@ -3,10 +3,12 @@ package com.foodorder.foodservice.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 
 @Entity
@@ -21,9 +23,7 @@ public class Food {
     private String description;
     private BigDecimal price;
 
-    public Food(String name, String description, BigDecimal price) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-    }
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Category category;
+
 }
