@@ -34,6 +34,13 @@ public class FoodService {
                 .map(this::convert).collect(Collectors.toSet());
     }
 
+    //TODO
+    public Set<FoodDto> findFoodByCategoryName(String name) {
+        return foodRepository.findByCategory_Parent_Name(name)
+                .stream()
+                .map(this::convert).collect(Collectors.toSet());
+    }
+
     private FoodDto convert(Food food) {
         return FoodDto.builder()
                 .name(food.getName())

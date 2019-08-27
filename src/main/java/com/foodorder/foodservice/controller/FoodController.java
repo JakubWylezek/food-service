@@ -29,6 +29,11 @@ public class FoodController {
         return new ResponseEntity<>(foodService.getFoodByName(name), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/foods/category/{name}")
+    public ResponseEntity<Set<FoodDto>> getFoodByCategoryName(@PathVariable String name) {
+        return new ResponseEntity<>(foodService.findFoodByCategoryName(name), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/foods/find")
     public ResponseEntity<Set<FoodDto>> findFoodByName(@RequestParam(value = "name") String name) {
         return new ResponseEntity<>(foodService.findFoodByName(name), HttpStatus.OK);

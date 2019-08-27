@@ -1,5 +1,6 @@
 package com.foodorder.foodservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +24,7 @@ public class Food {
     private String description;
     private BigDecimal price;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Category category;
 

@@ -1,5 +1,12 @@
 package com.foodorder.foodservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,7 +17,10 @@ import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.Set;
 
+@Getter
+@Setter
 @Entity
+@NoArgsConstructor
 public class Category {
 
     @Id
@@ -21,10 +31,11 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<Food> foods;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
-    private Set<Category> subCategores;
+    private Set<Category> subCategories;
 }
