@@ -20,4 +20,5 @@ public class CategoryService {
     public Category getCategoryByName(String name) {
         return categoryRepository.getByNameIgnoreCase(name);
     }
+
 }
