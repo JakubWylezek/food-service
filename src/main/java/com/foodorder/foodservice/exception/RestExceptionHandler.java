@@ -1,5 +1,6 @@
 package com.foodorder.foodservice.exception;
 
+import com.foodorder.foodservice.exception.custom.CategoryNotFoundException;
 import com.foodorder.foodservice.exception.custom.FoodNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -55,6 +56,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(FoodNotFoundException.class)
     private ResponseEntity<Object> handleFoodNotFoundException(FoodNotFoundException ex) {
+        return buildResponseEntity(ApiError.builder()
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    private ResponseEntity<Object> handleCategoryNotFoundException(CategoryNotFoundException ex) {
         return buildResponseEntity(ApiError.builder()
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())

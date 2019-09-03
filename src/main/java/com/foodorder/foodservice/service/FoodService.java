@@ -2,54 +2,54 @@ package com.foodorder.foodservice.service;
 
 import com.foodorder.foodservice.dto.FoodDto;
 import com.foodorder.foodservice.exception.custom.FoodNotFoundException;
-import com.foodorder.foodservice.model.Category;
 import com.foodorder.foodservice.model.Food;
-import com.foodorder.foodservice.repository.CategoryRepository;
 import com.foodorder.foodservice.repository.FoodRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class FoodService {
 
-    @Autowired
     private FoodRepository foodRepository;
+    private CategoryService categoryService;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    public List<FoodDto> getAllFood() {
-        return foodRepository.findAll()
-                .stream()
-                .map(this::convert).collect(Collectors.toList());
+    public Page<Food> getAllFood(Pageable page) {
+        return foodRepository.findAll(page);
     }
 
-    public FoodDto getFoodByName(String name) {
-        return convert(foodRepository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new FoodNotFoundException(name)));
+    public FoodDto getFoodByName(String foodName) {
+        return convert(foodRepository.findByNameIgnoreCase(foodName)
+                .orElseThrow(() -> new FoodNotFoundException(foodName)));
     }
 
-    public Set<FoodDto> findFoodByName(String name) {
-        return foodRepository.findFoodsByNameContainsIgnoreCase(name)
-                .stream()
-                .map(this::convert).collect(Collectors.toSet());
+    public Page<Food> findFoodByRequestParam(String foodName, String categoryName, Pageable pageable) {
+        if (foodName != null && categoryName != null) {
+            return findFoodByNameAndCategory(foodName, categoryName, pageable);
+        } else if (foodName != null) {
+            return findFoodByName(foodName, pageable);
+        } else if (categoryName != null) {
+            return findFoodByCategory(categoryName, pageable);
+        }
+        return getAllFood(pageable);
     }
 
-    public Set<FoodDto> findFoodByCategoryName(String name) {
-        return getListFoodFromCategory(categoryRepository.getByNameIgnoreCase(name))
-                .stream()
-                .map(this::convert).collect(Collectors.toSet());
+    public Page<Food> findFoodByName(String foodName, Pageable pageable) {
+        return foodRepository.findByNameIsContainingIgnoreCase(foodName, pageable);
     }
 
-    private List<Food> getListFoodFromCategory(Category category) {
-        List<Food> foods = new ArrayList<>(category.getFoods());
-        category.getSubCategories().forEach(category1 -> foods.addAll(getListFoodFromCategory(category1)));
-        return foods;
+    public Page<Food> findFoodByCategory(String categoryName, Pageable pageable) {
+        Set<String> categoryNames = categoryService.getCategoriesNamesByParentCategoryName(categoryName);
+        return foodRepository.findByCategory_NameIn(categoryNames, pageable);
+    }
+
+    public Page<Food> findFoodByNameAndCategory(String foodName, String categoryName, Pageable pageable) {
+        Set<String> categoryNames = categoryService.getCategoriesNamesByParentCategoryName(categoryName);
+        return foodRepository.findByNameIsContainingIgnoreCaseAndCategory_NameIn(foodName, categoryNames, pageable);
     }
 
     private FoodDto convert(Food food) {
